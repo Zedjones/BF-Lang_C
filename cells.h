@@ -29,4 +29,8 @@ LinkedList* create_cells();
 
 Node* get_head(LinkedList* list);
 
+void resize_list(LinkedList* list);
+
+void reset_list(LinkedList* list);
+
 #endif
