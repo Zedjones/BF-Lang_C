@@ -15,13 +15,14 @@ typedef struct Node_t{
 	struct Node_t* prev;
 	struct Node_t* next;
 	long data;
-}Node;
+} Node;
 
 typedef struct LinkedL_T{
 	Node* head;
+	Node* current;
 	unsigned capacity;
 	unsigned size;
-}LinkedList;
+} LinkedList;
 
 #endif
 

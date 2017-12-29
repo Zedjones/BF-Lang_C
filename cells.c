@@ -19,6 +19,7 @@ LinkedList* create_cells(){
 		current->next->prev = current;
 		current = current->next;	
 	}
+	list->current = list->head;
 	list->size = 0;
 	list->capacity = INITIAL_CAPACITY;
 	return list;
