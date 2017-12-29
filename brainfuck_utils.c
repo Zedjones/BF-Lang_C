@@ -14,6 +14,7 @@
 void process_line(char* line, LinkedList* list){
 	for(size_t i = 0; i < strlen(line); i++){
 		char c = line[i];
+		char* loop_dat;
 		switch(c){
 			case '<':
 				list->current = list->current->prev;
@@ -31,7 +32,17 @@ void process_line(char* line, LinkedList* list){
 				list->current->data--;
 				break;
 			case '.':
+				printf("Printing! ");
 				printf("%c", (char)list->current->data);
+				break;
+			case '[':
+				loop_dat = strtok(&line[i+1], "]");
+				long* entrance_data = &list->current->data;
+				while(*entrance_data){
+					process_line(loop_dat, list);			
+				}
+				i += strlen(loop_dat);			
+				break;
 		}
 	}
 }
