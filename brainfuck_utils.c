@@ -7,19 +7,21 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include "cells.h"
 
 #define _UTILS_
 
+char* loop_dat;
+unsigned int left_bracket_count = 0;
+
 void process_line(char* line, LinkedList* list){
 	for(size_t i = 0; i < strlen(line); i++){
 		char c = line[i];
-		char* loop_dat;
 		switch(c){
 			case '<':
 				list->current = list->current->prev;
 				list->size--;
-				//printf("Moving to cell %d\n", list->size);
 				break;
 			case '>':
 				if(list->current->next == NULL){
@@ -27,7 +29,6 @@ void process_line(char* line, LinkedList* list){
 				}
 				list->current = list->current->next;
 				list->size++;
-				//printf("Moving to cell %d\n", list->size);
 				break;
 			case '+':
 				list->current->data++;
@@ -36,28 +37,50 @@ void process_line(char* line, LinkedList* list){
 				list->current->data--;
 				break;
 			case '.':
-				//printf("Printing! ");
 				printf("%c", (char)list->current->data);
 				break;
-			case '[':
-				loop_dat = malloc(strlen(line));
-				int curr_i = i+1;
-				while(line[curr_i] != ']'){
+		}
+		if(c == '['){
+			char* nested_loop;
+			int curr_i;
+			if(loop_dat == NULL){
+				loop_dat = calloc(strlen(line), sizeof(char));
+				curr_i = i+1;
+				left_bracket_count++;
+				while(left_bracket_count != 0){
+					if(line[curr_i] == ']')
+						left_bracket_count--;
+					if(line[curr_i] == '[')
+						left_bracket_count++;
+					if(!left_bracket_count)
+						break;
 					strncat(loop_dat, &line[curr_i], 1);
 					curr_i++;
 				}
-				int start_ind = list->size;
-				//printf("Starting loop at index %d w/ data: %s\n",
-				//		start_ind, loop_dat);
-				long* entrance_data = &list->current->data;
-				while(*entrance_data){
-				//	printf("Still looping - data is %ld\n", *entrance_data);
-					process_line(loop_dat, list);			
+				while(list->current->data){
+					process_line(loop_dat, list);
 				}
-				//printf("Exiting loop\n");
-				//printf("Index before loop: %lu, adding: %lu\n", i, strlen(loop_dat));
-				i = curr_i;			
-				//printf("Current index: %lu, total length: %lu\n", i, strlen(line));
+				loop_dat = NULL;
+			}
+			else{
+				nested_loop = calloc(strlen(line), sizeof(char));
+				curr_i = i+1;
+				left_bracket_count++;
+				while(left_bracket_count != 0){
+					if(line[curr_i] == ']')
+						left_bracket_count--;
+					if(line[curr_i] == '[')
+						left_bracket_count++;
+					if(!left_bracket_count)
+						break;
+					strncat(nested_loop, &line[curr_i], 1);
+					curr_i++;
+				}
+				while(list->current->data){
+					process_line(nested_loop, list);
+				}
+			}
+			i = curr_i;
 		}
 	}
 }
