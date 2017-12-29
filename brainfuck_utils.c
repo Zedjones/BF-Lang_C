@@ -2,8 +2,11 @@
 /// description: supporting functions for the brainfuck language
 /// @author Nicholas Jones dojoman19@gmail.com
 
+#define _GNU_SOURCE
+
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include "cells.h"
 
 #define _UTILS_
@@ -34,9 +37,10 @@ void process_line(char* line, LinkedList* list){
 }
 
 void process_input(FILE* file, LinkedList* list){
+	size_t len;
 	char* line = NULL;
 	printf("> ");
-	while(getline(&line, NULL, file) != -1){
+	while(getline(&line, &len, file) != -1){
 		process_line(line, list);
 		printf("\n");
 		printf("> ");
