@@ -10,44 +10,35 @@
 
 LinkedList* create_cells(){
 	LinkedList* list = malloc(sizeof(LinkedList));
-	list->head = malloc(sizeof(Node));
-	list->head->data = 0;
-	Node* current = list->head;
-	for(int i = 0; i < INITIAL_CAPACITY-1; i++){
-		current->next = malloc(sizeof(Node));
-		current->next->data = 0;
-		current->next->prev = current;
-		current = current->next;	
+	list->cells = malloc(sizeof(long*)*INITIAL_CAPACITY);
+	if(list->cells == NULL)
+		fprintf(stderr, "Cannot allocate storage for cells.");
+	for(unsigned i = 0; i < INITIAL_CAPACITY; i++){
+		list->cells[i] = malloc(sizeof(long*));
+		*list->cells[i] = 0;
 	}
-	list->current = list->head;
-	list->size = 0;
+	list->curr_ind = 0;
 	list->capacity = INITIAL_CAPACITY;
 	return list;
 }
 
-Node* get_head(LinkedList* list){
-	return list->head;
-}
-
 void resize_list(LinkedList* list){
-	Node* current = get_head(list);
-	while(current->next != NULL){
-		current = current->next;
-	}
-	for(int i = 0; i < RESIZE_FACTOR; i++){
-		current->next = malloc(sizeof(Node));
-		current->next->data = 0;
-		current->next->prev = current;
-		current = current->next;
+	unsigned start_cap = list->capacity;
+	unsigned start_ind = list->curr_ind;
+	list->cells = realloc(list->cells, sizeof(long*) * 
+			(start_cap + RESIZE_FACTOR));
+	printf("%u\n", start_ind); 
+	printf("%lu\n", **list->cells);
+	for(unsigned i = start_ind+1; i <= start_ind+RESIZE_FACTOR; i++){
+		list->cells[i] = malloc(sizeof(long*));
+		*list->cells[i] = 0;
 	}
 	list->capacity += RESIZE_FACTOR;
 }
 
 void reset_list(LinkedList* list){
-	Node* current = get_head(list);
-	while(current->next != NULL){
-		current->data = 0;
-		current = current->next;
+	for(unsigned i = 0; i < list->capacity; i++){
+		*list->cells[i] = 0;
 	}
-	list->size = 0;
+	list->curr_ind = 0;
 }

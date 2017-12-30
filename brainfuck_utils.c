@@ -20,24 +20,22 @@ void process_line(char* line, LinkedList* list){
 		char c = line[i];
 		switch(c){
 			case '<':
-				list->current = list->current->prev;
-				list->size--;
+				list->curr_ind--;
 				break;
 			case '>':
-				if(list->current->next == NULL){
+				if(list->curr_ind == list->capacity-1){
 					resize_list(list);
 				}
-				list->current = list->current->next;
-				list->size++;
+				list->curr_ind++;
 				break;
 			case '+':
-				list->current->data++;
+				++*list->cells[list->curr_ind];
 				break;
 			case '-':
-				list->current->data--;
+				--*list->cells[list->curr_ind];
 				break;
 			case '.':
-				printf("%c", (char)list->current->data);
+				putchar(*list->cells[list->curr_ind]);
 				break;
 		}
 		if(c == '['){
@@ -57,7 +55,7 @@ void process_line(char* line, LinkedList* list){
 					strncat(loop_dat, &line[curr_i], 1);
 					curr_i++;
 				}
-				while(list->current->data){
+				while(*list->cells[list->curr_ind]){
 					process_line(loop_dat, list);
 				}
 				loop_dat = NULL;
@@ -76,7 +74,7 @@ void process_line(char* line, LinkedList* list){
 					strncat(nested_loop, &line[curr_i], 1);
 					curr_i++;
 				}
-				while(list->current->data){
+				while(*list->cells[list->curr_ind]){
 					process_line(nested_loop, list);
 				}
 			}
@@ -88,7 +86,8 @@ void process_line(char* line, LinkedList* list){
 void process_input(FILE* file, LinkedList* list){
 	size_t len;
 	char* line = NULL;
-	printf("> ");
+	if(file == stdin)
+		printf("> ");
 	while(getline(&line, &len, file) != -1){
 		process_line(line, list);
 		if(file == stdin){

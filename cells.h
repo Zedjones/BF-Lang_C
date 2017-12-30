@@ -5,30 +5,21 @@
 #ifndef _CELLS_H_
 #define _CELLS_H_
 
-#define RESIZE_FACTOR 100
+#define RESIZE_FACTOR 30000
 #define INITIAL_CAPACITY 30000
 
 #ifndef _CELLS_IMPL_
 #define _CELLS_IMPL_
 
-typedef struct Node_t{
-	struct Node_t* prev;
-	struct Node_t* next;
-	long data;
-} Node;
-
 typedef struct LinkedL_T{
-	Node* head;
-	Node* current;
+	long** cells;
 	unsigned capacity;
-	unsigned size;
+	unsigned curr_ind;
 } LinkedList;
 
 #endif
 
 LinkedList* create_cells();
-
-Node* get_head(LinkedList* list);
 
 void resize_list(LinkedList* list);
 

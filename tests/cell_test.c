@@ -3,27 +3,22 @@
 
 int main(){
 	LinkedList* list = create_cells();
-	Node* current = get_head(list);
-	current->data = 10000;
-	current->next->data = -5;
-	printf("First value: %ld\n", current->data);
-	current = current->next;
-	printf("Second value: %ld\n", current->data);
+	*list->cells[list->curr_ind] = 10000;
+	list->curr_ind++;
+	*list->cells[list->curr_ind] = -5;
+	list->curr_ind--;
+	printf("First value: %ld\n", *list->cells[list->curr_ind]);
+	list->curr_ind++;
+	printf("Second value: %ld\n", *list->cells[list->curr_ind]);
 	reset_list(list);	
-	printf("Second value: %ld\n", current->data);
-	current = get_head(list);
+	printf("Second value: %ld\n", *list->cells[list->curr_ind]);
+	list->curr_ind = 0;
 	for(int i = 0; i < INITIAL_CAPACITY+RESIZE_FACTOR+66; i++){
-		current->data = i+1;
-		printf("Index %d: %ld\n", i, current->data);
-		if(current->next == NULL){
+		*list->cells[i] = i+1;
+		printf("Index %d: %ld\n", i, *list->cells[i]);
+		if(list->curr_ind == list->capacity-1){
 			resize_list(list);
 		}
-		current = current->next;
-		list->size++;
-	}
-	while(current != NULL){
-		printf("Index %d: %ld\n", list->size, current->data);
-		current = current->prev;
-		list->size--;
+		list->curr_ind++;
 	}
 }
