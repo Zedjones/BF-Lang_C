@@ -6,7 +6,7 @@
 #define _CELLS_H_
 
 #define RESIZE_FACTOR 30000
-#define INITIAL_CAPACITY 30000
+#define INITIAL_CAPACITY 90000
 
 #ifndef _CELLS_IMPL_
 #define _CELLS_IMPL_

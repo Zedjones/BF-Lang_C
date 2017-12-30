@@ -37,6 +37,9 @@ void process_line(char* line, LinkedList* list){
 			case '.':
 				putchar(*list->cells[list->curr_ind]);
 				break;
+			case ',':
+				*list->cells[list->curr_ind] = getchar();
+				break;
 		}
 		if(c == '['){
 			char* nested_loop;
