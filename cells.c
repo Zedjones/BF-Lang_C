@@ -42,3 +42,11 @@ void reset_list(LinkedList* list){
 	}
 	list->curr_ind = 0;
 }
+
+void destroy_list(LinkedList* list){
+	for(unsigned i = 0; i < list->capacity; i++){
+		free(list->cells[i]);
+	}
+	free(list->cells);
+	free(list);
+}

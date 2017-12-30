@@ -25,4 +25,6 @@ void resize_list(LinkedList* list);
 
 void reset_list(LinkedList* list);
 
+void destroy_list(LinkedList* list);
+
 #endif

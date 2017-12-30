@@ -37,8 +37,10 @@ int main(int argc, char* argv[]){
 			return EXIT_FAILURE;
 		}
 		process_input(programfile, list);	
+		fclose(programfile);
 	}
 	else{
 		process_input(stdin, list);	
 	}
+	destroy_list(list);
 }

@@ -58,7 +58,7 @@ void process_line(char* line, LinkedList* list){
 				while(*list->cells[list->curr_ind]){
 					process_line(loop_dat, list);
 				}
-				loop_dat = NULL;
+				free(loop_dat);
 			}
 			else{
 				nested_loop = calloc(strlen(line), sizeof(char));
@@ -77,6 +77,7 @@ void process_line(char* line, LinkedList* list){
 				while(*list->cells[list->curr_ind]){
 					process_line(nested_loop, list);
 				}
+				free(nested_loop);
 			}
 			i = curr_i;
 		}
