@@ -6,13 +6,13 @@
 #define _CELLS_H_
 
 #define RESIZE_FACTOR 30000
-#define INITIAL_CAPACITY 90000
+#define INITIAL_CAPACITY 30000
 
 #ifndef _CELLS_IMPL_
 #define _CELLS_IMPL_
 
 typedef struct LinkedL_T{
-	long** cells;
+	char** cells;
 	unsigned capacity;
 	unsigned curr_ind;
 } LinkedList;

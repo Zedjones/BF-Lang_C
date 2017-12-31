@@ -13,11 +13,77 @@
 #define _UTILS_
 
 char* loop_dat;
-unsigned int left_bracket_count = 0;
+unsigned short loop_dat_len;
+unsigned short left_bracket_count = 0;
+bool incomplete_loop = false; 
 
 void process_line(char* line, LinkedList* list){
 	for(size_t i = 0; i < strlen(line); i++){
 		char c = line[i];
+		if(c == '[' || incomplete_loop){
+			char* nested_loop;
+			unsigned curr_i;
+			if(loop_dat == NULL || incomplete_loop){
+				if(loop_dat == NULL){
+					loop_dat = calloc(strlen(line), sizeof(char*));
+					loop_dat_len = strlen(line);
+					left_bracket_count++;
+					curr_i = i+1;
+				}
+				else{
+					loop_dat = realloc(loop_dat, loop_dat_len+strlen(line) * 
+							sizeof(char*));
+					loop_dat_len += strlen(line);
+					curr_i = i;
+				}
+				while(true){
+					if(line[curr_i] == ']'){
+						left_bracket_count--;
+					}
+					else if(line[curr_i] == '['){
+						left_bracket_count++;
+					}
+					if(!left_bracket_count){
+						incomplete_loop = false;	
+						break;
+					}
+					if(curr_i == strlen(line)-1){
+						incomplete_loop = true;
+						break;
+					}
+					strncat(loop_dat, &line[curr_i], 1);
+					curr_i++;
+				}
+				if(incomplete_loop){
+					i = curr_i;
+					continue;
+				}
+				while(*list->cells[list->curr_ind]){
+					process_line(loop_dat, list);
+				}
+				free(loop_dat);
+			}
+			else{
+				nested_loop = calloc(strlen(line), sizeof(char*));
+				curr_i = i+1;
+				left_bracket_count++;
+				while(left_bracket_count != 0){
+					if(line[curr_i] == ']')
+						left_bracket_count--;
+					if(line[curr_i] == '[')
+						left_bracket_count++;
+					if(!left_bracket_count)
+						break;
+					strncat(nested_loop, &line[curr_i], 1);
+					curr_i++;
+				}
+				while(*list->cells[list->curr_ind]){
+					process_line(nested_loop, list);
+				}
+				free(nested_loop);
+			}
+			i = curr_i;
+		}
 		switch(c){
 			case '<':
 				list->curr_ind--;
@@ -41,49 +107,6 @@ void process_line(char* line, LinkedList* list){
 				*list->cells[list->curr_ind] = getchar();
 				break;
 		}
-		if(c == '['){
-			char* nested_loop;
-			int curr_i;
-			if(loop_dat == NULL){
-				loop_dat = calloc(strlen(line), sizeof(char));
-				curr_i = i+1;
-				left_bracket_count++;
-				while(left_bracket_count != 0){
-					if(line[curr_i] == ']')
-						left_bracket_count--;
-					if(line[curr_i] == '[')
-						left_bracket_count++;
-					if(!left_bracket_count)
-						break;
-					strncat(loop_dat, &line[curr_i], 1);
-					curr_i++;
-				}
-				while(*list->cells[list->curr_ind]){
-					process_line(loop_dat, list);
-				}
-				free(loop_dat);
-			}
-			else{
-				nested_loop = calloc(strlen(line), sizeof(char));
-				curr_i = i+1;
-				left_bracket_count++;
-				while(left_bracket_count != 0){
-					if(line[curr_i] == ']')
-						left_bracket_count--;
-					if(line[curr_i] == '[')
-						left_bracket_count++;
-					if(!left_bracket_count)
-						break;
-					strncat(nested_loop, &line[curr_i], 1);
-					curr_i++;
-				}
-				while(*list->cells[list->curr_ind]){
-					process_line(nested_loop, list);
-				}
-				free(nested_loop);
-			}
-			i = curr_i;
-		}
 	}
 }
 
@@ -96,7 +119,10 @@ void process_input(FILE* file, LinkedList* list){
 		process_line(line, list);
 		if(file == stdin){
 			printf("\n");
-			printf("> ");
+			if(incomplete_loop)
+				printf("... ");
+			else
+				printf("> ");
 		}
 	}
 	free(line);

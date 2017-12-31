@@ -14,8 +14,7 @@ LinkedList* create_cells(){
 	if(list->cells == NULL)
 		fprintf(stderr, "Cannot allocate storage for cells.");
 	for(unsigned i = 0; i < INITIAL_CAPACITY; i++){
-		list->cells[i] = malloc(sizeof(long*));
-		*list->cells[i] = 0;
+		list->cells[i] = calloc(1, sizeof(long*));
 	}
 	list->curr_ind = 0;
 	list->capacity = INITIAL_CAPACITY;
@@ -27,11 +26,8 @@ void resize_list(LinkedList* list){
 	unsigned start_ind = list->curr_ind;
 	list->cells = realloc(list->cells, sizeof(long*) * 
 			(start_cap + RESIZE_FACTOR));
-	printf("%u\n", start_ind); 
-	printf("%lu\n", **list->cells);
 	for(unsigned i = start_ind+1; i <= start_ind+RESIZE_FACTOR; i++){
-		list->cells[i] = malloc(sizeof(long*));
-		*list->cells[i] = 0;
+		list->cells[i] = calloc(1, sizeof(long*));
 	}
 	list->capacity += RESIZE_FACTOR;
 }
