@@ -1,2 +1,2 @@
 # Brainfuck_C
-A Brainfuck interpreter written in C
+A Turing-complete Brainfuck interpreter written in C, which includes an interactive mode. 
