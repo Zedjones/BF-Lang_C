@@ -3,7 +3,7 @@
 /// @author Nicholas Jones dojoman19@gmail.com
 
 #define _GNU_SOURCE
-#define _UTILS_
+#define _OPS_
 
 #include <stdio.h>
 #include <string.h>
@@ -17,6 +17,8 @@ unsigned short loop_dat_len;
 unsigned short left_bracket_count = 0;
 bool incomplete_loop = false; 
 bool ZERO_NEWLINE;
+
+#define _UTILS_
 
 void process_line(char* line, LinkedList* list){
 	for(size_t i = 0; i < strlen(line); i++){
@@ -38,36 +40,34 @@ void process_line(char* line, LinkedList* list){
 					curr_i = i;
 				}
 				while(true){
-					if(line[curr_i] == ']'){
+					if(curr_i == strlen(line)-1){
+						incomplete_loop = true;
+						break;
+					}
+					else if(line[curr_i] == ']'){
 						left_bracket_count--;
-						//printf("Left bracket count: %d\n", left_bracket_count);
 					}
 					else if(line[curr_i] == '['){
 						left_bracket_count++;
-						//printf("Left bracket count: %d\n", left_bracket_count);
 					}
 					if(!left_bracket_count){
 						incomplete_loop = false;	
 						break;
 					}
-					if(curr_i == strlen(line)-1){
-						//printf("Loop is incomplete on this line.\n");
-						//printf("Left brackets remaining: %d\n", left_bracket_count);
-						incomplete_loop = true;
-						break;
+					if(strchr(valid_ops, line[curr_i])){
+						strncat(loop_dat, &line[curr_i], 1);
 					}
-					strncat(loop_dat, &line[curr_i], 1);
 					curr_i++;
 				}
 				if(incomplete_loop){
 					i = curr_i;
 					continue;
 				}
-				//printf("Final loop: %s\n", loop_dat);
 				while(*list->cells[list->curr_ind]){
 					process_line(loop_dat, list);
 				}
 				free(loop_dat);
+				loop_dat = NULL;
 			}
 			else{
 				nested_loop = calloc(strlen(line), sizeof(char*));

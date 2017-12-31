@@ -6,8 +6,13 @@
 
 extern bool ZERO_NEWLINE;
 
+#ifdef _OPS_
+char* valid_ops = "<>[]+-.,";
+#endif
+
 #ifndef _UTILS_
 #define _UTILS_
+
 
 #include <stdio.h>
 #include "cells.h"
