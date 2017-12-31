@@ -8,17 +8,18 @@
 #include "cells.h"
 #include "brainfuck_utils.h"
 
-char* USAGE_MESSAGE = "brainfuck_c [-f brainfuck-file]";
+char* USAGE_MESSAGE = "brainfuck_c [-f brainfuck-file] [-n]";
+bool ZERO_NEWLINE;
 
 int main(int argc, char* argv[]){
 	int opt;
 	char* program = NULL;
 	FILE* programfile;
-	if(argc != 1 && argc != 3){
+	if(argc != 1 && argc != 3 && argc != 4){
 		fprintf(stderr, "%s\n", USAGE_MESSAGE);
 		return EXIT_FAILURE;
 	}
-	while((opt = getopt(argc, argv, "f:")) != -1){
+	while((opt = getopt(argc, argv, "nf:")) != -1){
 		switch(opt){
 			case 'f':
 				if(program != NULL){
@@ -26,6 +27,9 @@ int main(int argc, char* argv[]){
 					return EXIT_FAILURE;
 				}
 				program = optarg;
+				break;
+			case 'n':
+				ZERO_NEWLINE = true;
 				break;
 		}
 	}

@@ -3,19 +3,20 @@
 /// @author Nicholas Jones dojoman19@gmail.com
 
 #define _GNU_SOURCE
+#define _UTILS_
 
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include "cells.h"
-
-#define _UTILS_
+#include "brainfuck_utils.h"
 
 char* loop_dat;
 unsigned short loop_dat_len;
 unsigned short left_bracket_count = 0;
 bool incomplete_loop = false; 
+bool ZERO_NEWLINE;
 
 void process_line(char* line, LinkedList* list){
 	for(size_t i = 0; i < strlen(line); i++){
@@ -39,15 +40,19 @@ void process_line(char* line, LinkedList* list){
 				while(true){
 					if(line[curr_i] == ']'){
 						left_bracket_count--;
+						//printf("Left bracket count: %d\n", left_bracket_count);
 					}
 					else if(line[curr_i] == '['){
 						left_bracket_count++;
+						//printf("Left bracket count: %d\n", left_bracket_count);
 					}
 					if(!left_bracket_count){
 						incomplete_loop = false;	
 						break;
 					}
 					if(curr_i == strlen(line)-1){
+						//printf("Loop is incomplete on this line.\n");
+						//printf("Left brackets remaining: %d\n", left_bracket_count);
 						incomplete_loop = true;
 						break;
 					}
@@ -58,6 +63,7 @@ void process_line(char* line, LinkedList* list){
 					i = curr_i;
 					continue;
 				}
+				//printf("Final loop: %s\n", loop_dat);
 				while(*list->cells[list->curr_ind]){
 					process_line(loop_dat, list);
 				}
@@ -84,6 +90,7 @@ void process_line(char* line, LinkedList* list){
 			}
 			i = curr_i;
 		}
+		char temp;
 		switch(c){
 			case '<':
 				list->curr_ind--;
@@ -104,7 +111,12 @@ void process_line(char* line, LinkedList* list){
 				putchar(*list->cells[list->curr_ind]);
 				break;
 			case ',':
-				*list->cells[list->curr_ind] = getchar();
+				temp = getchar();
+				if(ZERO_NEWLINE && temp == '\n'){
+					*list->cells[list->curr_ind] = 0;
+				}
+				else
+					*list->cells[list->curr_ind] = temp;
 				break;
 		}
 	}

@@ -2,6 +2,10 @@
 /// description: supporting functions header for the brainfuck language
 /// @author Nicholas Jones ncj4861
 
+#include <stdbool.h>
+
+extern bool ZERO_NEWLINE;
+
 #ifndef _UTILS_
 #define _UTILS_
 
