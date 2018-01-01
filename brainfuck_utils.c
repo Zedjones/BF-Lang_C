@@ -6,6 +6,7 @@
 #define _OPS_
 
 #include <stdio.h>
+#include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -13,6 +14,7 @@
 #include "brainfuck_utils.h"
 
 char* loop_dat;
+char* nested_loop_ptr;
 unsigned short loop_dat_len;
 unsigned short left_bracket_count = 0;
 bool incomplete_loop = false; 
@@ -63,13 +65,15 @@ void process_line(char* line, LinkedList* list){
 					i = curr_i;
 					continue;
 				}
-				while(*list->cells[list->curr_ind]){
+				while(list->cells[list->curr_ind]){
 					process_line(loop_dat, list);
 				}
 				free(loop_dat);
+				nested_loop_ptr = NULL;
 				loop_dat = NULL;
 			}
 			else{
+				nested_loop_ptr = nested_loop;
 				nested_loop = calloc(strlen(line), sizeof(char*));
 				curr_i = i+1;
 				left_bracket_count++;
@@ -83,10 +87,11 @@ void process_line(char* line, LinkedList* list){
 					strncat(nested_loop, &line[curr_i], 1);
 					curr_i++;
 				}
-				while(*list->cells[list->curr_ind]){
+				while(list->cells[list->curr_ind]){
 					process_line(nested_loop, list);
 				}
 				free(nested_loop);
+				nested_loop_ptr = NULL;
 			}
 			i = curr_i;
 		}
@@ -102,21 +107,22 @@ void process_line(char* line, LinkedList* list){
 				list->curr_ind++;
 				break;
 			case '+':
-				++*list->cells[list->curr_ind];
+				++list->cells[list->curr_ind];
 				break;
 			case '-':
-				--*list->cells[list->curr_ind];
+				--list->cells[list->curr_ind];
 				break;
 			case '.':
-				putchar(*list->cells[list->curr_ind]);
+				write(1, &list->cells[list->curr_ind], 1);
 				break;
 			case ',':
 				temp = getchar();
-				if(ZERO_NEWLINE && temp == '\n'){
-					*list->cells[list->curr_ind] = 0;
-				}
+				if(ZERO_NEWLINE && temp == '\n')
+					list->cells[list->curr_ind] = 0;
+				else if(temp == EOF)
+					break;
 				else
-					*list->cells[list->curr_ind] = temp;
+					list->cells[list->curr_ind] = temp;
 				break;
 		}
 	}

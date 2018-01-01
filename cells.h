@@ -12,7 +12,7 @@
 #define _CELLS_IMPL_
 
 typedef struct LinkedL_T{
-	char** cells;
+	char* cells;
 	unsigned capacity;
 	unsigned curr_ind;
 } LinkedList;
