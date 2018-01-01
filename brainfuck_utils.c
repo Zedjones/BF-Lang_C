@@ -14,13 +14,90 @@
 #include "brainfuck_utils.h"
 
 char* loop_dat;
-char* nested_loop_ptr;
+bf_list* main_loop;
 unsigned short loop_dat_len;
 unsigned short left_bracket_count = 0;
 bool incomplete_loop = false; 
 bool ZERO_NEWLINE;
 
 #define _UTILS_
+
+void func_move_l(LinkedList* list){
+	list->curr_ind--;
+}
+
+void func_move_r(LinkedList* list){
+	if(list->curr_ind == list->capacity-1)
+		resize_list(list);
+	list->curr_ind++;
+}
+
+void func_inc(LinkedList* list){
+	++list->cells[list->curr_ind];
+}
+
+void func_dec(LinkedList* list){
+	--list->cells[list->curr_ind];
+}
+
+void func_read(LinkedList* list){
+	char temp;
+	read(0, &temp, 1);
+	if(ZERO_NEWLINE && temp == '\n')
+		list->cells[list->curr_ind] = 0;
+	else if(temp == EOF)
+		return;
+	else
+		list->cells[list->curr_ind] = temp;
+}
+
+void func_write(LinkedList* list){
+	write(1, &list->cells[list->curr_ind], 1);
+}
+
+void process_loop(bf_list* loop, LinkedList* list){
+	for(unsigned i = 0; i < loop->loop_size; i++){
+		bf_container* container = loop->oper_list[i];
+		if(container->type == Operator){
+			container->operators->op->operation(list);
+		}
+		else{
+			process_loop(container->operators->loop, list);
+		}
+	}
+}
+
+bf_list* create_list(char* line){
+	bf_list* main_list = malloc(sizeof(bf_list));
+	main_list->current_item = 0;
+	main_list->loop_size = 0;
+	for(size_t i = 0; i < strlen(line); i++){
+		char c = line[i];
+		bf_container* container = malloc(sizeof(bf_container));
+		if(c == '>')
+			container->operators->op->operation = func_move_r;
+		else if(c == '<')
+			container->operators->op->operation = func_move_l;
+		else if(c == '-')
+			container->operators->op->operation = func_dec;
+		else if(c == '+')
+			container->operators->op->operation = func_inc;
+		else if(c == ',')
+			container->operators->op->operation = func_read;
+		else if(c == '.')
+			container->operators->op->operation = func_write;
+		else if(c == '['){
+			container->operators->loop = create_list(&line[i]);
+		}
+		else if(c == ']'){
+			return main_list;
+		}
+		main_list->oper_list[main_list->current_item] = container;
+		main_list->current_item++;
+		main_list->loop_size++;
+	}
+	return main_list;
+}
 
 void process_line(char* line, LinkedList* list){
 	for(size_t i = 0; i < strlen(line); i++){
@@ -30,14 +107,14 @@ void process_line(char* line, LinkedList* list){
 			unsigned curr_i;
 			if(loop_dat == NULL || incomplete_loop){
 				if(loop_dat == NULL){
-					loop_dat = calloc(strlen(line), sizeof(char*));
+					loop_dat = calloc(strlen(line), sizeof(char));
 					loop_dat_len = strlen(line);
 					left_bracket_count++;
 					curr_i = i+1;
 				}
 				else{
 					loop_dat = realloc(loop_dat, loop_dat_len+strlen(line) * 
-							sizeof(char*));
+							sizeof(char));
 					loop_dat_len += strlen(line);
 					curr_i = i;
 				}
@@ -69,12 +146,10 @@ void process_line(char* line, LinkedList* list){
 					process_line(loop_dat, list);
 				}
 				free(loop_dat);
-				nested_loop_ptr = NULL;
 				loop_dat = NULL;
 			}
 			else{
-				nested_loop_ptr = nested_loop;
-				nested_loop = calloc(strlen(line), sizeof(char*));
+				nested_loop = calloc(strlen(line), sizeof(char));
 				curr_i = i+1;
 				left_bracket_count++;
 				while(left_bracket_count != 0){
@@ -91,31 +166,37 @@ void process_line(char* line, LinkedList* list){
 					process_line(nested_loop, list);
 				}
 				free(nested_loop);
-				nested_loop_ptr = NULL;
 			}
 			i = curr_i;
 		}
-		char temp;
+		//char temp;
 		switch(c){
 			case '<':
-				list->curr_ind--;
+				func_move_l(list);
 				break;
 			case '>':
+				/*
 				if(list->curr_ind == list->capacity-1){
 					resize_list(list);
 				}
 				list->curr_ind++;
+				*/
+				func_move_r(list);
 				break;
 			case '+':
-				++list->cells[list->curr_ind];
+				//++list->cells[list->curr_ind];
+				func_inc(list);
 				break;
 			case '-':
-				--list->cells[list->curr_ind];
+				//--list->cells[list->curr_ind];
+				func_dec(list);
 				break;
 			case '.':
-				write(1, &list->cells[list->curr_ind], 1);
+				//write(1, &list->cells[list->curr_ind], 1);
+				func_write(list);
 				break;
 			case ',':
+				/*
 				temp = getchar();
 				if(ZERO_NEWLINE && temp == '\n')
 					list->cells[list->curr_ind] = 0;
@@ -123,6 +204,8 @@ void process_line(char* line, LinkedList* list){
 					break;
 				else
 					list->cells[list->curr_ind] = temp;
+				*/
+				func_read(list);
 				break;
 		}
 	}
