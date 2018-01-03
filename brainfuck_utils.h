@@ -38,7 +38,8 @@ typedef struct bf_container_t{
 typedef struct bf_loop_t{
 	bf_container** oper_list; 
 	unsigned current_item;
-	unsigned loop_size;
+	unsigned loop_cap;
+	bool complete;
 } bf_list;
 
 typedef union bf_union_t{
