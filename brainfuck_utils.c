@@ -320,6 +320,8 @@ void process_line(char* line, LinkedList* list){
 				main_loop = NULL;
 			}
 		}
+		//get character again in case it changed in loop processing
+		c = line[current_ind];
 		//Since non-loop commands only run once, we can process them
 		//as characters
 		switch(c){

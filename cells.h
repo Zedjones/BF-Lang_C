@@ -14,7 +14,7 @@
 ///list construct to hold a list of chars as cells 
 ///as well as relevant info
 typedef struct LinkedL_T{
-	char* cells;
+	unsigned char* cells;
 	unsigned capacity;
 	unsigned curr_ind;
 } LinkedList;
