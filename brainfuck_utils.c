@@ -15,6 +15,7 @@
 
 char* loop_dat;
 bf_list* main_loop;
+unsigned current_ind;
 unsigned short loop_dat_len;
 unsigned short left_bracket_count = 0;
 bool incomplete_loop = false; 
@@ -56,7 +57,7 @@ void func_write(LinkedList* list){
 }
 
 void print_loop(bf_list* loop){
-	printf("Looping over %d elements\n", loop->current_item);
+	//printf("Looping over %d elements\n", loop->current_item);
 	for(unsigned i = 0; i < loop->current_item; i++){
 		//printf("Processing item %d\n", i);
 		bf_container* current = loop->oper_list[i];
@@ -77,16 +78,19 @@ void print_loop(bf_list* loop){
 		else if(current->type == Loop){
 			printf("[");
 			print_loop(current->operators->loop);
-			printf("]");
 		}
 		else{
 			printf(" Unknown ");
 		}
 	}
-	printf("Done printing\n");
+	if(loop->complete){
+		printf("C]");
+	}
 }
 
 void process_loop(bf_list* loop, LinkedList* list){
+	//print_loop(main_loop);
+	//printf("Running loop.\n");
 	while(list->cells[list->curr_ind]){
 		//printf("Loop current item: %u\n", loop->current_item);
 		for(unsigned i = 0; i < loop->current_item; i++){
@@ -95,57 +99,50 @@ void process_loop(bf_list* loop, LinkedList* list){
 				container->operators->op->operation(list);
 			}
 			else{
-				//printf("Going through another loop\n");
 				process_loop(container->operators->loop, list);
 			}
 		}
 	}
 }
 
-bf_list* create_list(bf_list* list, char* line){
-	size_t i = 0;
+bf_list* create_loop(bf_list* list, char* line){
 	if(list == NULL){
-		//printf("Allocating main list\n");
 		list = malloc(sizeof(bf_list));
-		list->oper_list = malloc(sizeof(bf_container*) * strlen(line));
+		list->oper_list = malloc(sizeof(bf_container)*strlen(line));
 		list->current_item = 0;
 		list->loop_cap = strlen(line);
 		list->complete = false;
 	}
-	else if(!list->complete){
-		//printf("Reallocating!\n");
-		list->oper_list = realloc(main_loop->oper_list, sizeof(bf_container)* 
-				main_loop->loop_cap + strlen(line));
-		list->loop_cap += strlen(line);
-		bf_container* last_item = list->oper_list[list->current_item-1];
-		if(last_item->type == Loop && last_item->operators->loop->complete){
-			create_list(last_item->operators->loop, line);	
-		}
-		unsigned curr_i = 0;
-		unsigned left_brackets = 1;
-		while(true){
-			char temp = line[curr_i];
-			if(temp == '[')
-				left_brackets++;
-			else if(temp == ']')
-				left_brackets--;
-			curr_i++;
-			if(!left_brackets)
-				break;
-		}
-		i = curr_i-1;
-	}
 	else{
-		list = malloc(sizeof(bf_list));
-		list->oper_list = malloc(sizeof(bf_container*) * strlen(line));
-		list->loop_cap = strlen(line);
-		list->current_item = 0;
+		//printf("Current loop ");
+		//printf("[");
+		//print_loop(list);
+		//printf("\n");
+		list->oper_list = realloc(list->oper_list, sizeof(bf_container) * 
+				(list->loop_cap + strlen(line)));
+		list->loop_cap += strlen(line);
+		if(list->current_item > 0){
+			bf_container* current = list->oper_list[list->current_item-1];
+			if(current->type == Loop){
+				bf_list* inner_loop = current->operators->loop;		
+				if(!inner_loop->complete){
+					inner_loop = create_loop(inner_loop, line);			
+					if(inner_loop->complete)
+						current_ind++;
+				}
+			}
+		}
 	}
-	while(i < strlen(line)){
-		char c = line[i];
-		//printf("Processing %c\n", c);
+	//printf("Creating loop from %s", &line[current_ind]);
+	//printf("Current index: %d\n", current_ind);
+	while(current_ind < strlen(line)){
+		char c = line[current_ind];
+		//printf("Processing %c\n", line[current_ind]);
 		bf_container* container = malloc(sizeof(bf_container));
 		container->operators = malloc(sizeof(bf_union));
+		bf_union* operators = container->operators;
+		container->type = Unknown;
+		//printf("Processing %c\n", c);
 		if(c == '>'){
 			container->operators->op = malloc(sizeof(bf_oper));
 			container->operators->op->operation = func_move_r;
@@ -177,59 +174,32 @@ bf_list* create_list(bf_list* list, char* line){
 			container->type = Operator;
 		}
 		else if(c == '['){
-			//printf("Processing %s\n", &line[i+1]);
-			container->operators->loop = create_list(NULL, &line[i+1]);
-			//printf("Done processing %s\n", &line[i+1]);
-			unsigned curr_i = i+1;
-			unsigned left_brackets = 1;
-			//printf("Original curr_i: %d\n", curr_i);
-			while(true){
-				char temp = line[curr_i];
-				if(temp == '[')
-					left_brackets++;
-				else if(temp == ']')
-					left_brackets--;
-				curr_i++;
-				if(!left_brackets)
-					break;
-				if(curr_i == strlen(line)-1){
-					list->complete = false;
-					return list;
-				}
-			}
-			//printf("Setting i to %d\n", curr_i);
-			//printf("Next character: %c\n", line[curr_i]);
-			i = curr_i-1;
+			current_ind++;
+			operators->loop = create_loop(NULL, line);
 			container->type = Loop;
 		}
 		else if(c == ']'){
-			//printf("Exiting loop construction\n");
-			free(container);
-			//printf("Final loop: ");
+			//printf("Final loop ");
+			//printf("[");
 			//print_loop(list);
+			//printf("]");
 			//printf("\n");
-			incomplete_loop = false;
 			list->complete = true;
 			return list;
 		}
-		else{
-			free(container);
-			i++;
-			continue;
+		if(container->type != Unknown){
+			list->oper_list[list->current_item] = container;
+			list->current_item++;
 		}
-		list->oper_list[list->current_item] = container;
-		list->current_item++;
-		i++;
+		current_ind++;
 	}
-	//printf("Loop processing complete.");
 	list->complete = false;
-	incomplete_loop = true;
 	return list;
 }
 
 void process_line(char* line, LinkedList* list){
-	for(size_t i = 0; i < strlen(line); i++){
-		char c = line[i];
+	for(current_ind = 0; current_ind < strlen(line); current_ind++){
+		char c = line[current_ind];
 		if(c == '[' || incomplete_loop){
 			/*
 			char* nested_loop;
@@ -239,6 +209,7 @@ void process_line(char* line, LinkedList* list){
 					loop_dat = calloc(strlen(line), sizeof(char));
 					loop_dat_len = strlen(line);
 					left_bracket_count++;
+				printf("Done creating main loop\n");
 					curr_i = i+1;
 				}
 				else{
@@ -298,34 +269,27 @@ void process_line(char* line, LinkedList* list){
 			}
 			i = curr_i;
 			*/
-			//printf("Creating main loop.\n");
-			main_loop = create_list(main_loop, &line[i+1]);
-			unsigned curr_i = i+1;
-			unsigned left_brackets = 1;
-			while(left_brackets){
-				char curr = line[curr_i];
-				if(curr == '[')
-					left_brackets++;
-				else if(curr == ']')
-					left_brackets--;
-				curr_i++;
-				if(!left_brackets)
-					break;
-				if(i == strlen(line)-1){
-					incomplete_loop = true;
-					break;
-				}
+			if(line[current_ind] == '[' && !incomplete_loop){
+				//printf("Start condition entered\n");
+				current_ind++;
+				main_loop = create_loop(main_loop, line);
 			}
-			if(incomplete_loop){
-				i = curr_i-1;
-				continue;
+			else{
+				main_loop = create_loop(main_loop, line);
 			}
-			incomplete_loop = false;
-			process_loop(main_loop, list);
-			main_loop = NULL;
-			//printf("After loop, on index %d\n", curr_i-1);
-			//printf("Next character is %c\n", line[curr_i]);
-			i = curr_i-1;
+			if(!main_loop->complete){
+				incomplete_loop = true;	
+			}
+			else{
+				incomplete_loop = false;
+			}
+			if(!incomplete_loop){
+				//printf("Complete loop ");
+				//print_loop(main_loop);
+				//printf("\n");
+				process_loop(main_loop, list);
+				main_loop = NULL;
+			}
 		}
 		switch(c){
 			case '<':
@@ -356,6 +320,7 @@ void process_input(FILE* file, LinkedList* list){
 	if(file == stdin)
 		printf("> ");
 	while(getline(&line, &len, file) != -1){
+		//printf("Processing line: %s\n", line);
 		process_line(line, list);
 		if(file == stdin){
 			printf("\n");

@@ -21,7 +21,7 @@ char* valid_ops = "<>[]+-.,";
 #define _UTILS_H_
 
 typedef enum bf_type_t{
-	Loop, Operator
+	Loop, Operator, Unknown
 } type;
 
 typedef struct bf_oper_t{
