@@ -13,23 +13,28 @@
 #include "cells.h"
 #include "brainfuck_utils.h"
 
-char* loop_dat;
 bf_list* main_loop;
 unsigned current_ind;
-unsigned short loop_dat_len;
-unsigned short left_bracket_count = 0;
 bool incomplete_loop = false; 
 bool ZERO_NEWLINE;
 
 #define _UTILS_
 
 void func_move_l(LinkedList* list){
+	if(list->curr_ind == 0){
+		list->curr_ind = list->capacity-1;
+		return;
+	}
 	list->curr_ind--;
 }
 
 void func_move_r(LinkedList* list){
 	if(list->curr_ind == list->capacity-1)
 		resize_list(list);
+	if(list->curr_ind == list->capacity-1){
+		list->curr_ind = 0;
+		return;
+	}
 	list->curr_ind++;
 }
 
@@ -54,6 +59,24 @@ void func_read(LinkedList* list){
 
 void func_write(LinkedList* list){
 	write(1, &list->cells[list->curr_ind], 1);
+}
+
+void free_loop(bf_list* loop){
+	for(unsigned i = 0; i < loop->current_item; i++){
+		bf_container* current = loop->oper_list[i];
+		if(current->type == Operator){
+			free(current->operators->op);
+			free(current->operators);
+			free(current);
+		}
+		else if(current->type == Loop){
+			free_loop(current->operators->loop);
+			free(current->operators);
+			free(current);
+		}
+	}
+	free(loop->oper_list);
+	free(loop);
 }
 
 void print_loop(bf_list* loop){
@@ -184,6 +207,8 @@ bf_list* create_loop(bf_list* list, char* line){
 			//print_loop(list);
 			//printf("]");
 			//printf("\n");
+			free(container->operators);
+			free(container);
 			list->complete = true;
 			return list;
 		}
@@ -201,74 +226,6 @@ void process_line(char* line, LinkedList* list){
 	for(current_ind = 0; current_ind < strlen(line); current_ind++){
 		char c = line[current_ind];
 		if(c == '[' || incomplete_loop){
-			/*
-			char* nested_loop;
-			unsigned curr_i;
-			if(loop_dat == NULL || incomplete_loop){
-				if(loop_dat == NULL){
-					loop_dat = calloc(strlen(line), sizeof(char));
-					loop_dat_len = strlen(line);
-					left_bracket_count++;
-				printf("Done creating main loop\n");
-					curr_i = i+1;
-				}
-				else{
-					loop_dat = realloc(loop_dat, loop_dat_len+strlen(line) * 
-							sizeof(char));
-					loop_dat_len += strlen(line);
-					curr_i = i;
-				}
-				while(true){
-					if(curr_i == strlen(line)-1){
-						incomplete_loop = true;
-						break;
-					}
-					else if(line[curr_i] == ']'){
-						left_bracket_count--;
-					}
-					else if(line[curr_i] == '['){
-						left_bracket_count++;
-					}
-					if(!left_bracket_count){
-						incomplete_loop = false;	
-						break;
-					}
-					if(strchr(valid_ops, line[curr_i])){
-						strncat(loop_dat, &line[curr_i], 1);
-					}
-					curr_i++;
-				}
-				if(incomplete_loop){
-					i = curr_i;
-					continue;
-				}
-				while(list->cells[list->curr_ind]){
-					process_line(loop_dat, list);
-				}
-				free(loop_dat);
-				loop_dat = NULL;
-			}
-			else{
-				nested_loop = calloc(strlen(line), sizeof(char));
-				curr_i = i+1;
-				left_bracket_count++;
-				while(left_bracket_count != 0){
-					if(line[curr_i] == ']')
-						left_bracket_count--;
-					if(line[curr_i] == '[')
-						left_bracket_count++;
-					if(!left_bracket_count)
-						break;
-					strncat(nested_loop, &line[curr_i], 1);
-					curr_i++;
-				}
-				while(list->cells[list->curr_ind]){
-					process_line(nested_loop, list);
-				}
-				free(nested_loop);
-			}
-			i = curr_i;
-			*/
 			if(line[current_ind] == '[' && !incomplete_loop){
 				//printf("Start condition entered\n");
 				current_ind++;
@@ -288,6 +245,7 @@ void process_line(char* line, LinkedList* list){
 				//print_loop(main_loop);
 				//printf("\n");
 				process_loop(main_loop, list);
+				free_loop(main_loop);
 				main_loop = NULL;
 			}
 		}
