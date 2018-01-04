@@ -114,7 +114,8 @@ void free_loop(bf_list* loop){
 }
 
 /**
-Print each item in the loop  
+Print each item in the loop 
+@param loop - the loop to print
 */
 void print_loop(bf_list* loop){
 	printf("[");

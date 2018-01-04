@@ -11,6 +11,8 @@
 #ifndef _CELLS_IMPL_
 #define _CELLS_IMPL_
 
+///list construct to hold a list of chars as cells 
+///as well as relevant info
 typedef struct LinkedL_T{
 	char* cells;
 	unsigned capacity;
