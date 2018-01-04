@@ -31,10 +31,6 @@ void func_move_l(LinkedList* list){
 void func_move_r(LinkedList* list){
 	if(list->curr_ind == list->capacity-1)
 		resize_list(list);
-	if(list->curr_ind == list->capacity-1){
-		list->curr_ind = 0;
-		return;
-	}
 	list->curr_ind++;
 }
 
