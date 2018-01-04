@@ -307,7 +307,7 @@ void process_line(char* line, LinkedList* list){
 			}
 			//if the main loop is not complete, set incomplete_loop
 			if(!main_loop->complete){
-				incomplete_loop = true;	
+				incomplete_loop = true;
 			}
 			else{
 				incomplete_loop = false;
@@ -319,9 +319,10 @@ void process_line(char* line, LinkedList* list){
 				free_loop(main_loop);
 				main_loop = NULL;
 			}
+			continue;
 		}
 		//get character again in case it changed in loop processing
-		c = line[current_ind];
+		//c = line[current_ind];
 		//Since non-loop commands only run once, we can process them
 		//as characters
 		switch(c){
