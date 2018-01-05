@@ -87,8 +87,9 @@ Function to write the value of the current cell to stdout
 @param list - list of cells
 */
 void func_write(LinkedList* list){
-	char size = write(1, &list->cells[list->curr_ind], 1);
-	(void)size;
+	//char size = write(1, &list->cells[list->curr_ind], 1);
+	//(void)size;
+	putchar(list->cells[list->curr_ind]);
 }
 
 /**
