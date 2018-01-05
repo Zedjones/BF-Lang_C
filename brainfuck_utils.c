@@ -71,7 +71,8 @@ Function to read input and set value of current cell to input
 void func_read(LinkedList* list){
 	char temp;
 	//use read for faster reading
-	read(0, &temp, 1);
+	char size = read(0, &temp, 1);
+	(void)size;
 	if(ZERO_NEWLINE && temp == '\n')
 		list->cells[list->curr_ind] = 0;
 	//no change on EOF
@@ -86,7 +87,8 @@ Function to write the value of the current cell to stdout
 @param list - list of cells
 */
 void func_write(LinkedList* list){
-	write(1, &list->cells[list->curr_ind], 1);
+	char size = write(1, &list->cells[list->curr_ind], 1);
+	(void)size;
 }
 
 /**
