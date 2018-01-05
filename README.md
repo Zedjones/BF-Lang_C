@@ -2,6 +2,12 @@ Brainfuck_C [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-bl
 ==========
 A Turing-complete Brainfuck interpreter written in C, which includes an interactive mode.
 
+<!-- vim-markdown-toc GFM --> 
+* [Usage](#usage)
+* [Example Programs](#example-programs)
+* [Compiling and Building](#compiling-and-building)
+* [Future Features](#future-features)
+
 ## Usage
     brainfuck_c [-n] [-f filename]
     -n    treat 10 (newline) as 0
@@ -20,3 +26,9 @@ $ cmake ..
 $ make
 ```
 The executable will now be in the `build` directory you created. 
+
+## Future Features
+* Faster mode for file input
+* Make code portable to MacOS and Windows
+* Add more options for interpreter (e.g. disable wrapping)
+
