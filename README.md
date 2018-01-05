@@ -2,6 +2,7 @@ Brainfuck_C [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-bl
 ==========
 A Turing-complete Brainfuck interpreter written in C, which includes an interactive mode.
 
+## Table of Contents
 <!-- vim-markdown-toc GFM --> 
 * [Usage](#usage)
 * [Example Programs](#example-programs)
