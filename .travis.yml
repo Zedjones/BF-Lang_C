@@ -1,0 +1,17 @@
+language: c
+
+matrix:
+    include:
+        - os: linux
+          compiler: gcc
+        - os: linux
+          compiler: clang
+        - os: osx
+          compiler: gcc
+        - os: osx
+          compiler: clang
+
+script:
+    - mkdir build
+    - cd build
+    - cmake .. && make
