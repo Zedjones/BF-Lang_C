@@ -1,4 +1,4 @@
-Brainfuck_C [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html) [![build status](https://api.travis-ci.org/Zedjones/Brainfuck_C.svg?branch=master)](https://travis-ci.org/Zedjones/Brainfuck_C)
+BFLang_C [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html) [![build status](https://api.travis-ci.org/Zedjones/Brainfuck_C.svg?branch=master)](https://travis-ci.org/Zedjones/Brainfuck_C)
 ==========
 A Turing-complete Brainfuck interpreter written in C, which includes an interactive mode.
 
