@@ -89,12 +89,16 @@ Function to write the value of the current cell to stdout
 @param list - list of cells
 */
 void func_write(LinkedList* list){
-	//char size = write(1, &list->cells[list->curr_ind], 1);
-	//(void)size;
 	putchar(list->cells[list->curr_ind]);
-	if(FLUSH){
-		fflush(stdout);
-	}
+}
+
+/**
+Alternate function if FLUSH is true
+@param list - list of cells
+*/
+void func_write_FLUSH(LinkedList* list){
+	putchar(list->cells[list->curr_ind]);
+	fflush(stdout);
 }
 
 /**
@@ -131,7 +135,8 @@ void print_loop(bf_list* loop){
 		bf_container* current = loop->oper_list[i];
 		//print symbol based on operation function
 		if(current->type == Operator){
-			if(current->operators->op->operation == func_write)
+			if(current->operators->op->operation == func_write ||
+					current->operators->op->operation == func_write_FLUSH)
 				printf(".");
 			else if(current->operators->op->operation == func_read)
 				printf(",");
@@ -260,7 +265,10 @@ bf_list* create_loop(bf_list* list, char* line){
 		}
 		else if(c == '.'){
 			container->operators->op = malloc(sizeof(bf_oper));
-			container->operators->op->operation = func_write;
+			if(FLUSH)
+				container->operators->op->operation = func_write_FLUSH;
+			else
+				container->operators->op->operation = func_write;
 			container->type = Operator;
 		}
 		else if(c == '['){
@@ -348,7 +356,10 @@ void process_line(char* line, LinkedList* list){
 				func_dec(list);
 				break;
 			case '.':
-				func_write(list);
+				if(FLUSH)
+					func_write_FLUSH(list);
+				else
+					func_write(list);
 				break;
 			case ',':
 				func_read(list);

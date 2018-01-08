@@ -9,7 +9,11 @@
 #include "brainfuck_utils.h"
 
 //standard usage message and newline extern
-char* USAGE_MESSAGE = "brainfuck_c [-f brainfuck-file] [-n]";
+char* USAGE_MESSAGE = 
+"brainfuck_c [-f brainfuck-file] [-n] [-s] \n\
+-n\ttreat 10 (newline) as 0\n\
+-f\tbrainfuck program file\n\
+-s\timmediately flush out to stdout";
 bool ZERO_NEWLINE;
 bool FLUSH;
 

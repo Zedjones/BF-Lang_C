@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "../cells.h"
+#include "cells.h"
 
 int main(){
 	LinkedList* list = create_cells();

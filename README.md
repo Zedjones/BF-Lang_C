@@ -13,6 +13,7 @@ A Turing-complete Brainfuck interpreter written in C, which includes an interact
     brainfuck_c [-n] [-f filename]
     -n    treat 10 (newline) as 0
     -f    brainfuck program file
+	-s    immediately flush output to stdout
     
 ## Example Programs
 Check `brainfuck_examples` for example programs, many of which were written by [Daniel B. Cristofani](http://www.hevanet.com/cristofd/brainfuck/).
