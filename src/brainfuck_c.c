@@ -25,8 +25,7 @@ int main(int argc, char* argv[]){
 	int opt;
 	char* program = NULL;
 	FILE* programfile;
-	//return if incorrect number of arguments
-	if(argc != 1 && argc != 3 && argc != 4){
+	if(argc > 5){
 		fprintf(stderr, "%s\n", USAGE_MESSAGE);
 		return EXIT_FAILURE;
 	}
@@ -46,6 +45,9 @@ int main(int argc, char* argv[]){
 			case 's':
 				FLUSH = true;
 				break;
+			default:
+				fprintf(stderr, "%s\n", USAGE_MESSAGE);
+				return EXIT_FAILURE;
 		}
 	}
 	//create list of cells
