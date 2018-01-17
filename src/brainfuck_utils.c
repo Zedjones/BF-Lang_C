@@ -2,7 +2,7 @@
 /// description: supporting functions for the brainfuck language
 /// @author Nicholas Jones dojoman19@gmail.com
 
-#define _GNU_SOURCE
+//#define _GNU_SOURCE
 #define _OPS_
 
 #include <stdio.h>
@@ -10,6 +10,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include "alternatives.h"
 #include "cells.h"
 #include "brainfuck_utils.h"
 

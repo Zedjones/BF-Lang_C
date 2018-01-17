@@ -14,7 +14,10 @@ A Turing-complete Brainfuck interpreter written in C, which includes an interact
     -n    treat 10 (newline) as 0
     -f    brainfuck program file
 	-s    immediately flush output to stdout
-    
+
+## Licensing
+All files are licensed under GPL 2.0, unless otherwise specified, as is the case with `src/alternatives.c` (which is public domain).
+
 ## Example Programs
 Check `brainfuck_examples` for example programs, many of which were written by [Daniel B. Cristofani](http://www.hevanet.com/cristofd/brainfuck/).
 
@@ -33,4 +36,3 @@ The executable will now be in the `build` directory you created.
 * Faster mode for file input
 * Make code portable to MacOS and Windows
 * Add more options for interpreter (e.g. disable wrapping)
-

@@ -6,6 +6,10 @@ matrix:
           compiler: gcc
         - os: linux
           compiler: clang
+        - os: osx
+          compiler: gcc
+        - os: osx
+          compiler: gcc
 
 script:
     - mkdir build
