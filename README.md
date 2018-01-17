@@ -34,5 +34,4 @@ The executable will now be in the `build` directory you created.
 
 ## Future Features
 * Faster mode for file input
-* Make code portable to MacOS and Windows
 * Add more options for interpreter (e.g. disable wrapping)
