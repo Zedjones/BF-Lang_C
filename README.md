@@ -5,6 +5,7 @@ A Turing-complete Brainfuck interpreter written in C, which includes an interact
 ## Table of Contents
 <!-- vim-markdown-toc GFM --> 
 * [Usage](#usage)
+* [Licensing](#licensing)
 * [Example Programs](#example-programs)
 * [Compiling and Building](#compiling-and-building)
 * [Future Features](#future-features)
