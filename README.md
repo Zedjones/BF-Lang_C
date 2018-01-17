@@ -23,13 +23,22 @@ Check `brainfuck_examples` for example programs, many of which were written by [
 
 ## Compiling and Building
 The only dependencies for building this program are CMake and a C Compiler.
-It can be built with the following set of commands:
+It can be built on MacOS or Linux with the following set of commands:
 ```sh
 $ mkdir build
 $ cd build
 $ cmake ..
 $ make
 ```
+
+On Windows, using MinGW and CMake (both binaries must be in $PATH), you must use this set of commands: 
+```sh
+$ mkdir build
+$ cd build
+$ cmake .. -G "MinGW Makefiles"
+$ mingw32-make
+```
+
 The executable will now be in the `build` directory you created. 
 
 ## Future Features
