@@ -10,7 +10,7 @@ A Turing-complete Brainfuck interpreter written in C, which includes an interact
 * [Future Features](#future-features)
 
 ## Usage
-    brainfuck_c [-n] [-f filename]
+    brainfuck_c [-s] [-n] [-f filename]
     -n    treat 10 (newline) as 0
     -f    brainfuck program file
 	-s    immediately flush output to stdout
